@@ -229,6 +229,9 @@ export default function ImportPage() {
   // ── Render ──────────────────────────────────────────────────────────────
   const badge = preview ? BADGE_COLORS[preview.schemaType] || BADGE_COLORS.electronic : null;
   const activeImages = preview ? preview.images.filter((_, i) => !removedImages.includes(i)) : [];
+  const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+  const bgRemovalActive = Boolean(config?.hasRembg);
+  const bgRemovalLabel = !bgRemovalActive && !isLocalhost ? 'BG Removal (cloud)' : 'BG Removal';
 
   return (
     <div className="flex h-full flex-col overflow-hidden [&_button]:min-h-11 [&_input]:min-h-11 [&_select]:min-h-11 [&_textarea]:min-h-24">
@@ -240,7 +243,7 @@ export default function ImportPage() {
         </div>
         {config && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <Chip label="BG Removal" active={config.hasRembg} />
+            <Chip label={bgRemovalLabel} active={bgRemovalActive} />
             <Chip label="Watermark" active={config.hasSharp && config.hasWatermark} />
           </div>
         )}
@@ -751,9 +754,10 @@ function Spin({ size = 16 }: { size?: number }) {
 }
 
 function Chip({ label, active }: { label: string; active: boolean }) {
+  const indicator = active ? '✓' : '-';
   return (
-    <span style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, background: active ? '#071a0e' : 'var(--bg-raised)', border: `1px solid ${active ? '#166534' : 'var(--border)'}`, color: active ? '#4ade80' : 'var(--text-dim)' }}>
-      {active ? '✓' : '✗'} {label}
+    <span style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, background: active ? '#071a0e' : 'var(--bg-raised)', border: `1px solid ${active ? '#166534' : 'var(--border)'}`, color: active ? '#4ade80' : 'var(--text-muted)' }}>
+      {indicator} {label}
     </span>
   );
 }
