@@ -23,7 +23,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ses
     const activeFiles = downloadedFiles.filter(f => !removedImages.includes(f.index));
 
     // Process + upload
-    const imageAssetIds = await processAndUpload(activeFiles, bgRemoveIndexes, watermarkIndexes, sanity);
+    let imageAssetIds: string[];
+    try {
+      imageAssetIds = await processAndUpload(activeFiles, bgRemoveIndexes, watermarkIndexes, sanity);
+    } catch (err: unknown) {
+      const code = (err as NodeJS.ErrnoException)?.code;
+      if (bgRemoveIndexes.length > 0 && (code === 'ENOENT' || process.env.NODE_ENV === 'production')) {
+        console.warn('BG removal unavailable, continuing without bg removal:', (err as Error).message);
+        imageAssetIds = await processAndUpload(activeFiles, [], watermarkIndexes, sanity);
+      } else {
+        throw err;
+      }
+    }
 
     // Filter scrapedData images
     const activeImages = scrapedData.images.filter((_, i) => !removedImages.includes(i));

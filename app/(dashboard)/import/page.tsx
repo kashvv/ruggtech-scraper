@@ -263,7 +263,7 @@ export default function ImportPage() {
               type="number" value={markup} onChange={e => setMarkup(e.target.value)}
               min={0} max={500} step={1}
               className="w-full md:w-28"
-              style={{ ...inp(), textAlign: 'center' }}
+              style={{ ...inp(), width: '80px', textAlign: 'center' }}
               title="Markup %"
               placeholder="Markup %"
             />
@@ -336,7 +336,7 @@ export default function ImportPage() {
                 <>
                   <Section title="Product Info">
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '14px' }}>
-                      <div style={{ gridColumn: isMobile ? 'auto' : 'span 2' }}>
+                      <div style={{ gridColumn: isMobile ? '1 / -1' : 'span 2', minWidth: 0 }}>
                         {label('Product Name')}
                         <input style={inp()} value={editName}
                           onChange={e => { setEditName(e.target.value); debounceField('set_name', e.target.value); }}

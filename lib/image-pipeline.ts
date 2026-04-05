@@ -148,7 +148,13 @@ export async function processAndUpload(
     let current = filepath;
 
     if (bgRemoveIndexes.includes(index)) {
-      try { current = await removeBackground(current); } catch {}
+      const original = current;
+      try {
+        current = await removeBackground(current);
+      } catch (e: unknown) {
+        console.warn('BG removal failed, using original image:', (e as Error).message);
+        current = original;
+      }
     }
     if (watermarkIndexes.includes(index) && hasWatermarkFile()) {
       try { current = await addWatermark(current); } catch {}
